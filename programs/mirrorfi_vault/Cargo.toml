@@ -1,0 +1,27 @@
+[package]
+name = "mirrorfi_vault"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "mirrorfi_vault"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = [
+    "anchor-lang/idl-build",
+    "anchor-spl/idl-build",
+]
+
+
+[dependencies]
+anchor-lang = { version = "0.31.1", features = ["init-if-needed", "event-cpi"] }
+anchor-spl = { version = "0.31.1", features = ["metadata"] }
+kamino_lending_interface = "0.1.0"
+
