@@ -11,7 +11,7 @@ use anchor_spl::{
 
 use crate::{
     Errors::InsufficientSolToWrap,
-    utils::constant::WSOL_TOKEN_MINT,
+    utils::constants::WSOL_TOKEN_MINT,
 };
 
 
@@ -30,8 +30,7 @@ pub fn handle(ctx: Context<WrapSol>, amount: u64) -> Result<()> {
             to: user_ata.to_account_info(),
         },
     );
-
-    let ix = transfer(cpi_ctx, amount)?;
+    transfer(cpi_ctx, amount)?;
 
     // SYNC SOL AS WSOL
     let cpi_ctx = CpiContext::new(
@@ -40,8 +39,7 @@ pub fn handle(ctx: Context<WrapSol>, amount: u64) -> Result<()> {
             account: user_ata.to_account_info(),
         },
     );
-
-    let ix = sync_native(cpi_ctx)?;
+    sync_native(cpi_ctx)?;
 
     Ok(())
 }

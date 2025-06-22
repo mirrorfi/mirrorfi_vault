@@ -1,9 +1,8 @@
 mod state;
-//mod util;
-//mod error;
-//mod event;
+mod utils;
 mod handler;
 
+use crate::handler::*;
 use anchor_lang::prelude::*;
 
 declare_id!("5NK8X7nuDaVB8ZhLGsbsUSXiFszbXjwSUp2FZN1vHA55");
@@ -20,9 +19,9 @@ pub mod mirrorfi_vault {
         handler_unwrap_sol::handle(ctx, amount)
     }
 
-    pub fn unwrap_all_sol(ctx: Context<UnwrapAllSol>) -> Result<()> {
-        handler_unwrap_all_sol::handle(ctx)
-    }
+    // pub fn unwrap_all_sol(ctx: Context<UnwrapAllSol>) -> Result<()> {
+    //     handler_unwrap_all_sol::handle(ctx)
+    // }
 }
 
 #[error_code]

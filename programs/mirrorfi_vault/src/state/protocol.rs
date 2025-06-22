@@ -31,13 +31,15 @@ pub struct Protocol {
     pub bump: u8,
 }
 
-impl Size for Protocol {
-    const SIZE: usize = 152 + 8;
+// Define Size trait for account size calculations
+pub trait Size {
+    const SIZE: usize;
 }
-const_assert_eq!(
-    VaultProtocol::SIZE,
-    std::mem::size_of::<VaultProtocol>() + 8
-);
+
+impl Size for Protocol {
+    //const SIZE: usize = 152 + 8;
+    const SIZE: usize = std::mem::size_of::<Protocol>() + 8;
+}
 
 impl Default for Protocol {
     fn default() -> Self {

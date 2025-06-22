@@ -1,17 +1,15 @@
-use anchor_lang::{
-    prelude::*,
-    system_program::{transfer, Transfer},
-};
-
+use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
     token::Token,
-    token_interface::{sync_native, Mint, SyncNative, TokenAccount},
+    token_interface::{close_account, CloseAccount, Mint, TokenAccount},
 };
 
 use crate::{
     Errors::InsufficientWSolToUnwrap,
-    utils::constant::WSOL_TOKEN_MINT,
+    utils::constants::WSOL_TOKEN_MINT,
+    utils::seeds::WSOL_AUTH,
+    utils::transfer_token,
 };
 
 #[inline(never)]
@@ -36,7 +34,7 @@ pub fn handle(ctx: Context<UnwrapSol>, amount: u64) -> Result<()> {
 
     let user_key = user.key();
     let seeds = &[
-        seeds::WSOL_AUTH,
+        WSOL_AUTH,
         user_key.as_ref(),
         &[ctx.bumps.wsol_buffer],
     ];
@@ -58,12 +56,13 @@ pub fn handle(ctx: Context<UnwrapSol>, amount: u64) -> Result<()> {
     Ok(())
 }
 
+
 #[derive(Accounts)]
 #[instruction()]
 pub struct UnwrapSol<'info> {
     /// CHECK Safe only for buffer authority
     #[account(
-        seeds = [seeds::WSOL_AUTH, user.key().as_ref()],
+        seeds = [WSOL_AUTH, user.key().as_ref()],
         bump,
     )]
     pub wsol_buffer: AccountInfo<'info>,

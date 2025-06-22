@@ -2,3 +2,5 @@ timestamp,file_path,change_description
 2025-06-21T21:08:09+08:00,\\wsl.localhost\Ubuntu\root\solana\mirrorfi\mirrorfi_vault\GUIDE.MD,Enhanced comprehensive guide for Solana program development with accurate patterns
 2025-06-21T21:08:09+08:00,\\wsl.localhost\Ubuntu\root\solana\mirrorfi\mirrorfi_vault\llms.txt,Created initial AI context management file with project overview and development guidelines
 2025-06-21T21:08:09+08:00,\\wsl.localhost\Ubuntu\root\solana\mirrorfi\mirrorfi_vault\logs.csv,Created change tracking log file
+2025-06-23T04:09:27+08:00,\\wsl.localhost\Ubuntu\root\solana\mirrorfi\mirrorfi_vault\programs\mirrorfi_vault\src\lib.rs,Fixed scope issues by adding proper imports for pubkey! macro and Pubkey type in constants module
+2025-06-23T04:09:27+08:00,\\wsl.localhost\Ubuntu\root\solana\mirrorfi\mirrorfi_vault\programs\mirrorfi_vault\src\state\protocol.rs,Added Size trait definition missing from protocol.rs

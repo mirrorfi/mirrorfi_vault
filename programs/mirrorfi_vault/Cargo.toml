@@ -23,5 +23,18 @@ idl-build = [
 [dependencies]
 anchor-lang = { version = "0.31.1", features = ["init-if-needed", "event-cpi"] }
 anchor-spl = { version = "0.31.1", features = ["metadata"] }
-kamino_lending_interface = "0.1.0"
+spl-type-length-value = "0.7.0"
+derivative = "2.2.0"
+fixed = "1.27.0"
+fixed-macro = "1.2.0"
+clippy = { version = "0.0.302", optional = true }
+uint = "0.10.0"
+hex = "0.4.3"
+serde = { version = "1.0", features = ["derive"], optional = true }
+serde_json = { version = "1.0", optional = true }
+cfg-if = "1.0"
+pyth-solana-receiver-sdk = { version = "0.6.1" }
+
+
+#kamino_lending_interface = { version = "0.1.0", features = ["cpi"] }
 
