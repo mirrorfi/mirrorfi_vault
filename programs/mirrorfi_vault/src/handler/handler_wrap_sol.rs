@@ -10,7 +10,7 @@ use anchor_spl::{
 };
 
 use crate::{
-    Errors::InsufficientSolToWrap,
+    error::ErrorCode,
     utils::constants::WSOL_TOKEN_MINT,
 };
 
@@ -20,7 +20,7 @@ pub fn handle(ctx: Context<WrapSol>, amount: u64) -> Result<()> {
     let user = &mut ctx.accounts.user;
     let user_ata = &ctx.accounts.user_ata;
 
-    require_gte!(user.lamports(), amount, InsufficientSolToWrap);
+    require_gte!(user.lamports(), amount, ErrorCode::InsufficientSolToWrap);
 
     // TRANSFER SOL to WSOL ATA
     let cpi_ctx = CpiContext::new(

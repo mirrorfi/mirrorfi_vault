@@ -7,6 +7,9 @@ use anchor_lang::prelude::*;
 
 declare_id!("5NK8X7nuDaVB8ZhLGsbsUSXiFszbXjwSUp2FZN1vHA55");
 
+pub mod error;
+use error::ErrorCode;
+
 #[program]
 pub mod mirrorfi_vault {
     use super::*;
@@ -24,6 +27,7 @@ pub mod mirrorfi_vault {
     // }
 }
 
+// Use the dedicated error module instead
 #[error_code]
 pub enum Errors {
     #[msg("insufficient sol to wrap")]

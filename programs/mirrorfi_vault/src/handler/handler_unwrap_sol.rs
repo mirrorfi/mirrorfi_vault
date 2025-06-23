@@ -6,7 +6,7 @@ use anchor_spl::{
 };
 
 use crate::{
-    Errors::InsufficientWSolToUnwrap,
+    error::ErrorCode,
     utils::constants::WSOL_TOKEN_MINT,
     utils::seeds::WSOL_AUTH,
     utils::transfer_token,
@@ -19,7 +19,7 @@ pub fn handle(ctx: Context<UnwrapSol>, amount: u64) -> Result<()> {
     let wsol_ata = &ctx.accounts.wsol_ata;
     let user_ata = &ctx.accounts.user_ata;
 
-    require_gte!(user_ata.amount, amount, InsufficientWSolToUnwrap);
+    require_gte!(user_ata.amount, amount, ErrorCode::InsufficientWSolToUnwrap);
 
     // TRANSFER WSOL to TEMP WSOL ACCOUNT
     transfer_token(
