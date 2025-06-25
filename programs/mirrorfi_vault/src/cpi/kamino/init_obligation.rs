@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use crate::cpi::get_discriminator;
+use crate::utils::cpi::*;
 
 // Kamino Lending Program ID - Replace this with the actual program ID
 pub const KAMINO_LENDING_PROGRAM_ID: &str = "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD";
@@ -49,53 +49,41 @@ impl<'info> ToAccountMetas for InitObligationAccounts<'info> {
 /// Initialize an obligation in the Kamino lending protocol
 ///
 /// # Arguments
-///
 /// * `accounts` - The accounts needed for the instruction
 /// * `program_id` - The Kamino lending program ID
 /// * `args` - Arguments for the instruction
-/// * `signer_seeds` - Seeds for PDAs that need to sign
-///
-/// # Returns
-///
-/// * `Result<()>` - Result indicating success or failure
 pub fn execute<'info>(
     accounts: InitObligationAccounts<'info>,
     program_id: AccountInfo<'info>,
     args: InitObligationArgs,
-    signer_seeds: &[&[&[u8]]],
 ) -> Result<()> {
-    // Instruction data (will be serialized and sent in the CPI call)
-    let mut instruction_data = Vec::new();
+    // Define the accounts needed for the instruction using our ToAccountMetas implementation
+    let account_metas = accounts.to_account_metas(None);
+
+    // Create instruction data using our helper function
+    let instruction_data = create_instruction_data("initObligation", &args)?;
     
-    // Add instruction discriminator for init_obligation in Kamino
-    // This is the first 8 bytes of sha256("global:initObligation")
-    let init_obligation_discriminator = get_discriminator("initObligation");
-    instruction_data.extend_from_slice(init_obligation_discriminator);
+    // Create the instruction using our helper function
+    let ix = create_instruction(
+        program_id.key(),
+        account_metas,
+        instruction_data
+    );
     
-    // Serialize and add the args
-    args.serialize(&mut instruction_data)?;
-    
-    // Create the instruction
-    let ix = anchor_lang::solana_program::instruction::Instruction {
-        program_id: program_id.key(),
-        accounts: accounts.to_account_metas(None),
-        data: instruction_data,
-    };
-    
-    // Execute the instruction via CPI
-    anchor_lang::solana_program::program::invoke_signed(
-        &ix,
-        &[
-            accounts.obligation_owner,
-            accounts.fee_payer,
-            accounts.obligation,
-            accounts.lending_market,
-            accounts.seed1_account,
-            accounts.seed2_account,
-            accounts.owner_user_metadata,
-            accounts.rent,
-            accounts.system_program,
-        ],
-        signer_seeds,
-    ).map_err(Into::into)
+    // Get account infos in the same order as the account metas
+    let account_infos = &[
+        accounts.obligation_owner.to_account_info(),
+        accounts.fee_payer.to_account_info(),
+        accounts.obligation.to_account_info(),
+        accounts.lending_market.to_account_info(),
+        accounts.seed1_account.to_account_info(),
+        accounts.seed2_account.to_account_info(),
+        accounts.owner_user_metadata.to_account_info(),
+        accounts.rent.to_account_info(),
+        accounts.system_program.to_account_info(),
+        program_id,
+    ];
+
+    // Execute the instruction using our helper function
+    execute_cpi(ix, account_infos)
 }

@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::{self, instruction::Instruction, program::invoke_signed};
-use crate::utils::cpi::get_discriminator;
+use anchor_lang::solana_program::instruction::AccountMeta;
+use crate::utils::cpi::*;
 
 /// The Pluto Leverage Program ID
 pub const PLUTO_LEVERAGE_PROGRAM_ID: &str = "DNcR7b5ZpU7X4nTa62sTmroyvsSa52d66hunbCaMUjq2";
@@ -42,19 +42,10 @@ pub struct RandomCpi<'info> {
     pub program: UncheckedAccount<'info>,
 }
 
-pub fn handler(ctx: Context<RandomCpi>) -> Result<()> {
+pub fn handle(ctx: Context<RandomCpi>) -> Result<()> {
     msg!("Executing CPI to plutonian_initialize instruction");
 
-    // Get the discriminator for the plutonian_initialize instruction
-    // Note: We could also use the hardcoded value from the IDL: [143, 18, 128, 64, 106, 123, 124, 122]
-    let plutonian_initialize_discriminator = get_discriminator("plutonian_initialize");
-
-    // Create the instruction data - for this instruction, we only need the discriminator
-    // since it doesn't take any arguments
-    let mut instruction_data = Vec::new();
-    instruction_data.extend_from_slice(&plutonian_initialize_discriminator);
-
-    // Create account metas for the CPI call
+    // Create account metas for the CPI call using our structured approach
     let account_metas = vec![
         // actor - writable and signer
         AccountMeta::new(ctx.accounts.actor.key(), true),
@@ -70,32 +61,40 @@ pub fn handler(ctx: Context<RandomCpi>) -> Result<()> {
         AccountMeta::new_readonly(ctx.accounts.system_program.key(), false),
         // event_authority - not writable, not signer
         AccountMeta::new_readonly(ctx.accounts.event_authority.key(), false),
+        // program - not writable, not signer (the program account itself needs to be included)
+        AccountMeta::new_readonly(ctx.accounts.program.key(), false),
     ];
+    
+    // This instruction doesn't have any arguments, so we create empty args struct
+    struct EmptyArgs {}
+    
+    // Create instruction data using our helper function
+    let instruction_data = create_instruction_data("plutonian_initialize", &EmptyArgs {})?;
+    
+    // Create the instruction using our helper function
+    let ix = create_instruction(
+        ctx.accounts.program.key(),
+        account_metas, 
+        instruction_data
+    );
 
-    // Create the instruction
-    let ix = Instruction {
-        program_id: ctx.accounts.program.key(),
-        accounts: account_metas,
-        data: instruction_data,
-    };
+    msg!("Invoking instruction to Pluto Leverage program: {}", ctx.accounts.program.key());
 
-    // Execute the CPI call
-    // Using invoke_signed without seeds here since we are not signing with a PDA
-    // If we needed to sign with a PDA, we would pass the seeds to invoke_signed
-    invoke_signed(
-        &ix,
-        &[
-            ctx.accounts.actor.to_account_info(),
-            ctx.accounts.user.to_account_info(),
-            ctx.accounts.protocol.to_account_info(),
-            ctx.accounts.plutonian.to_account_info(),
-            ctx.accounts.plutonian_authority.to_account_info(),
-            ctx.accounts.system_program.to_account_info(),
-            ctx.accounts.event_authority.to_account_info(),
-            ctx.accounts.program.to_account_info(),
-        ],
-        &[], // No signer seeds, as we're using a keypair signer
-    )?;
+    // Gather account infos in the same order as account_metas
+    let account_infos = &[
+        ctx.accounts.actor.to_account_info(),
+        ctx.accounts.user.to_account_info(),
+        ctx.accounts.protocol.to_account_info(),
+        ctx.accounts.plutonian.to_account_info(),
+        ctx.accounts.plutonian_authority.to_account_info(),
+        ctx.accounts.system_program.to_account_info(),
+        ctx.accounts.event_authority.to_account_info(),
+        ctx.accounts.program.to_account_info(),
+    ];
+    
+    // Execute the instruction using our helper function
+    // No signer seeds needed as we're using a keypair signer
+    execute_cpi(ix, account_infos)?;
 
     msg!("Successfully executed plutonian_initialize CPI call");
     Ok(())

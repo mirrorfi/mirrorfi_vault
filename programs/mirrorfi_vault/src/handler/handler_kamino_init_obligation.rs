@@ -1,9 +1,9 @@
 use anchor_lang::prelude::*;
-//use crate::cpi::kamino::{lending as kamino_lending, KAMINO_LENDING_PROGRAM_ID};
 use crate::cpi::kamino;
 use crate::cpi::kamino::init_obligation::KAMINO_LENDING_PROGRAM_ID;
 
 pub fn handle(ctx: Context<KaminoInitObligation>, args: KaminoInitObligationArgs) -> Result<()> {
+    // Create the instruction args for the CPI call
     let init_args = kamino::init_obligation::InitObligationArgs {
         tag: args.tag,
         id: args.id,
