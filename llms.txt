@@ -29,16 +29,6 @@ Key components include:
 6. **ALWAYS calculate exact account sizes** - prevent account allocation issues by computing precise space requirements
 7. **ALWAYS provide complete implementation** - include all imports, structs, and supporting code
 8. **ALWAYS document your code** - add meaningful comments for complex logic
-9. **ALWAYS maintain a logs.csv file** - document all changes made to the codebase as described below
-
-## Tracking Changes - logs.csv
-
-You must maintain a logs.csv file to track all code changes. Requirements:
-1. Create logs.csv if it doesn't exist
-2. NEVER delete any existing log entries - only append new ones
-3. Each entry should have the format: timestamp,file_path,change_description
-4. Be specific but concise in your change descriptions
-5. Do not read previous logs unless specifically requested
 
 ## Code Structure and Organization
 

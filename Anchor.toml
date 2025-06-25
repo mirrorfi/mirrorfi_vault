@@ -14,8 +14,9 @@ mirrorfi_vault = "5NK8X7nuDaVB8ZhLGsbsUSXiFszbXjwSUp2FZN1vHA55"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "https://solana-mainnet.core.chainstack.com/ca1dab648a53d262b507d0b72a27b7fc"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+kamino = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/kamino.ts"
