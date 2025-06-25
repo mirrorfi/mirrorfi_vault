@@ -1,6 +1,7 @@
 mod state;
 mod utils;
 mod handler;
+mod cpi;
 
 use crate::handler::*;
 use anchor_lang::prelude::*;
@@ -21,10 +22,15 @@ pub mod mirrorfi_vault {
     pub fn unwrap_sol(ctx: Context<UnwrapSol>, amount: u64) -> Result<()> {
         handler_unwrap_sol::handle(ctx, amount)
     }
+    
+    /// This function initializes a new obligation in the Kamino lending protocol
+    pub fn kamino_init_obligation(ctx: Context<KaminoInitObligation>, args: KaminoInitObligationArgs) -> Result<()> {
+        handler_kamino_init_obligation::handle(ctx, args)
+    }
 
-    // pub fn unwrap_all_sol(ctx: Context<UnwrapAllSol>) -> Result<()> {
-    //     handler_unwrap_all_sol::handle(ctx)
-    // }
+    pub fn random_cpi(ctx: Context<RandomCpi>) -> Result<()> {
+        handler_random_cpi::handle(ctx)
+    }
 }
 
 // Use the dedicated error module instead

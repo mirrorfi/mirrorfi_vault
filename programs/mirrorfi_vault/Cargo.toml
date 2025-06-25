@@ -35,6 +35,3 @@ serde_json = { version = "1.0", optional = true }
 cfg-if = "1.0"
 pyth-solana-receiver-sdk = { version = "0.6.1" }
 
-
-#kamino_lending_interface = { version = "0.1.0", features = ["cpi"] }
-
