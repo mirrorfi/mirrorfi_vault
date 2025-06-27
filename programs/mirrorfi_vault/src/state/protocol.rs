@@ -18,10 +18,10 @@ pub struct Protocol {
     pub protocol_fee_authority: Pubkey,
     /// Extra Space
     #[derivative(Debug = "ignore")]
-    pub padding: [u64; 4],
+    pub padding: [u64; 64],
     /// The Fee Rate of the protocol, 1000 = 1% (decimal = 3)
-    #[derivative(Default(value="0u32"))] // 0%
-    pub protocol_fee_rate: u32, // 0%
+    #[derivative(Default(value="0u64"))] // 0%
+    pub protocol_fee_rate: u64, // 0%
     /// Protocol Initialization State
     pub is_initialized: bool,
     /// Protocol Freeze State
@@ -29,16 +29,6 @@ pub struct Protocol {
     /// Protocol Version
     pub version: u8,
     pub bump: u8,
-}
-
-// Define Size trait for account size calculations
-pub trait Size {
-    const SIZE: usize;
-}
-
-impl Size for Protocol {
-    //const SIZE: usize = 152 + 8;
-    const SIZE: usize = std::mem::size_of::<Protocol>() + 8;
 }
 
 impl Default for Protocol {
@@ -60,6 +50,8 @@ impl Default for Protocol {
 }
 
 impl Protocol {
+    pub const SIZE: usize = std::mem::size_of::<Protocol>() + 8;
+    
     pub fn init(&mut self, params: InitProtocolParams) -> Result<()> {
         *self = Self::default();
         self.creator = params.creator;
