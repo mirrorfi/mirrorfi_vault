@@ -3,7 +3,7 @@ use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token_interface::{TokenAccount, TokenInterface, transfer, Transfer};
 use crate::state::vault::Vault;
 use crate::state::protocol::Protocol;
-use crate::utils::seeds::{VAULT_AUTHORITY, VAULT_FEE_AUTHORITY};
+use crate::utils::seeds;
 use crate::error::ErrorCode;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
@@ -38,7 +38,7 @@ pub struct CollectVaultFee<'info> {
     
     #[account(
         mut,
-        seeds = [VAULT_AUTHORITY.as_ref(), vault.key().as_ref()],
+        seeds = [seeds::VAULT_AUTHORITY.as_ref(), vault.key().as_ref()],
         bump,
     )]
     /// CHECK: This is the vault authority PDA
@@ -46,7 +46,7 @@ pub struct CollectVaultFee<'info> {
     
     #[account(
         mut,
-        seeds = [VAULT_FEE_AUTHORITY.as_ref(), vault.key().as_ref()],
+        seeds = [seeds::VAULT_FEE_AUTHORITY.as_ref(), vault.key().as_ref()],
         bump,
     )]
     /// CHECK: This is the vault fee authority PDA
@@ -81,7 +81,7 @@ pub fn handle(ctx: Context<CollectVaultFee>, args: CollectFeeArgs) -> Result<()>
     
     // Transfer tokens from vault token account to the fee token account
     let seeds = &[
-        VAULT_AUTHORITY.as_ref(),
+        seeds::VAULT_AUTHORITY.as_ref(),
         ctx.accounts.vault.key().as_ref(),
         &[*ctx.bumps.get("vault_authority").unwrap()],
     ];

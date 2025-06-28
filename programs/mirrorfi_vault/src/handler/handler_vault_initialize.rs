@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use crate::state::vault::{Vault, InitVaultParams};
 use crate::state::protocol::Protocol;
-use crate::utils::seeds::{VAULT, VAULT_AUTHORITY, VAULT_FEE_AUTHORITY, PROTOCOL_FEE_AUTHORITY};
+use crate::utils::seeds;
 use crate::error::ErrorCode;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
@@ -27,31 +27,31 @@ pub struct InitializeVault<'info> {
         init,
         payer = creator,
         space = Vault::SIZE,
-        seeds = [VAULT.as_ref(), creator.key().as_ref(), &args.id.to_le_bytes()],
+        seeds = [seeds::VAULT.as_ref(), creator.key().as_ref(), &args.id.to_le_bytes()],
         bump
     )]
     pub vault: Account<'info, Vault>,
     
     #[account(
-        seeds = [VAULT_AUTHORITY.as_ref(), vault.key().as_ref()],
+        seeds = [seeds::VAULT_AUTHORITY.as_ref(), vault.key().as_ref()],
         bump,
     )]
     /// CHECK: Vault authority PDA, will be used for vault operations
-    pub vault_authority: UncheckedAccount<'info>,
+    pub vault_authority: AccountInfo<'info>,
     
     #[account(
-        seeds = [VAULT_FEE_AUTHORITY.as_ref(), vault.key().as_ref()],
+        seeds = [seeds::VAULT_FEE_AUTHORITY.as_ref(), vault.key().as_ref()],
         bump,
     )]
     /// CHECK: Vault fee authority PDA, will be used for fee collection
-    pub vault_fee_authority: UncheckedAccount<'info>,
+    pub vault_fee_authority: AccountInfo<'info>,
     
     /// CHECK: The protocol fee authority account
     #[account(
-        seeds = [PROTOCOL_FEE_AUTHORITY.as_ref(), protocol.key().as_ref()],
+        seeds = [seeds::PROTOCOL_FEE_AUTHORITY.as_ref(), protocol.key().as_ref()],
         bump,
     )]
-    pub protocol_fee_authority: UncheckedAccount<'info>,
+    pub protocol_fee_authority: AccountInfo<'info>,
     
     /// Mint address of the deposit token
     /// CHECK: This is the deposit token mint, will be verified elsewhere

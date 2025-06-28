@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use crate::state::protocol::{Protocol, InitProtocolParams};
-use crate::utils::seeds::{PROTOCOL, PROTOCOL_AUTHORITY, PROTOCOL_FEE_AUTHORITY};
+use crate::utils::seeds;
 use crate::error::ErrorCode;
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
@@ -19,24 +19,24 @@ pub struct InitializeProtocol<'info> {
         init,
         payer = creator,
         space = Protocol::SIZE,
-        seeds = [PROTOCOL.as_ref(), creator.key().as_ref(), &args.id.to_le_bytes()],
+        seeds = [seeds::PROTOCOL.as_ref(), creator.key().as_ref(), &args.id.to_le_bytes()],
         bump
     )]
     pub protocol: Account<'info, Protocol>,
     
     #[account(
-        seeds = [PROTOCOL_AUTHORITY.as_ref(), protocol.key().as_ref()],
+        seeds = [seeds::PROTOCOL_AUTHORITY.as_ref(), protocol.key().as_ref()],
         bump,
     )]
     /// CHECK: Protocol authority PDA, will be used for various protocol-level permissions
-    pub protocol_authority: UncheckedAccount<'info>,
+    pub protocol_authority: AccountInfo<'info>,
     
     #[account(
-        seeds = [PROTOCOL_FEE_AUTHORITY.as_ref(), protocol.key().as_ref()],
+        seeds = [seeds::PROTOCOL_FEE_AUTHORITY.as_ref(), protocol.key().as_ref()],
         bump,
     )]
     /// CHECK: Protocol fee authority PDA, will be used for fee collection
-    pub protocol_fee_authority: UncheckedAccount<'info>,
+    pub protocol_fee_authority: AccountInfo<'info>,
     
     pub system_program: Program<'info, System>,
 }
