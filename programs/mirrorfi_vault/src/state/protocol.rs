@@ -51,7 +51,7 @@ impl Default for Protocol {
 
 impl Protocol {
     pub const SIZE: usize = std::mem::size_of::<Protocol>() + 8;
-    
+
     pub fn init(&mut self, params: InitProtocolParams) -> Result<()> {
         *self = Self::default();
         self.creator = params.creator;
@@ -62,6 +62,20 @@ impl Protocol {
         self.protocol_fee_authority = params.protocol_fee_authority;
         self.protocol_fee_rate = params.protocol_fee_rate;
         self.created_at = Clock::get()?.unix_timestamp;
+        self.updated_at = Clock::get()?.unix_timestamp;
+        Ok(())
+    }
+    
+    /// Freeze the protocol to prevent further operations
+    pub fn freeze(&mut self) -> Result<()> {
+        self.freeze = true;
+        self.updated_at = Clock::get()?.unix_timestamp;
+        Ok(())
+    }
+    
+    /// Unfreeze the protocol to allow operations
+    pub fn unfreeze(&mut self) -> Result<()> {
+        self.freeze = false;
         self.updated_at = Clock::get()?.unix_timestamp;
         Ok(())
     }

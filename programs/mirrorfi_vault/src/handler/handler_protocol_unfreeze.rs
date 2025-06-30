@@ -8,7 +8,7 @@ pub struct UnfreezeProtocol<'info> {
     
     #[account(
         mut,
-        has_one = owner @ ErrorCode::UnauthorizedAccess,
+        has_one = owner,
     )]
     pub protocol: Account<'info, Protocol>,
 }
@@ -17,16 +17,10 @@ pub fn handle(ctx: Context<UnfreezeProtocol>) -> Result<()> {
     // Get a mutable reference to the protocol account
     let protocol = &mut ctx.accounts.protocol;
     
-    // Check if protocol is already unfrozen
-    require!(protocol.freeze, ErrorCode::AlreadyUnfrozen);
-    
-    // Unfreeze the protocol
-    protocol.freeze = false;
-    
-    // Update the timestamp
-    protocol.updated_at = Clock::get()?.unix_timestamp;
-    
-    msg!("Protocol unfrozen successfully");
-    
+    // Unfreeze the protocol using the method on Protocol
+    protocol.unfreeze()?;
+
+    msg!("Protocol unfrozen by: {}", self.owner);
+
     Ok(())
 }
