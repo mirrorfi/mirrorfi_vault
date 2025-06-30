@@ -28,14 +28,12 @@ pub struct InitializeProtocol<'info> {
         seeds = [seeds::PROTOCOL_AUTHORITY.as_ref(), protocol.key().as_ref()],
         bump,
     )]
-    /// CHECK: Protocol authority PDA, will be used for various protocol-level permissions
     pub protocol_authority: AccountInfo<'info>,
     
     #[account(
         seeds = [seeds::PROTOCOL_FEE_AUTHORITY.as_ref(), protocol.key().as_ref()],
         bump,
     )]
-    /// CHECK: Protocol fee authority PDA, will be used for fee collection
     pub protocol_fee_authority: AccountInfo<'info>,
     
     pub system_program: Program<'info, System>,
